@@ -1,5 +1,6 @@
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
+import { authSecret } from "@/lib/authSecret";
 
 export default withAuth(
   function middleware(req) {
@@ -11,6 +12,7 @@ export default withAuth(
     }
   },
   {
+    secret: authSecret,
     callbacks: {
       authorized: ({ token, req }) => {
         // Admin routes require admin token

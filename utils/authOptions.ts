@@ -1,6 +1,7 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import config from "@/lib/config";
+import { authSecret } from "@/lib/authSecret";
 
 // Frontend puro: la validación de credenciales la hace el backend externo.
 // El backend debe exponer POST {NEXT_PUBLIC_API_BASE_URL}/api/auth/login
@@ -79,6 +80,6 @@ export const authOptions: NextAuthOptions = {
   jwt: {
     maxAge: 15 * 60,
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: authSecret,
   debug: process.env.NODE_ENV === "development",
 };
