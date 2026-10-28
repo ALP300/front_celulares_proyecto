@@ -3,67 +3,50 @@
 // Name of the component: Products.tsx
 // Developer: Aleksandar Kuzmanovic
 // Version: 1.0
-// Component call: <Products params={params} searchParams={searchParams} />
+// Component call: <Products />
 // Input parameters: { params, searchParams }: { params: { slug?: string[] }, searchParams: { [key: string]: string | string[] | undefined } }
 // Output: products grid
 // *********************
 
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import ProductItem from "./ProductItem";
 import apiClient from "@/lib/api";
 
-const Products = async ({ params, searchParams }: { params: { slug?: string[] }, searchParams: { [key: string]: string | string[] | undefined } }) => {
-  // getting all data from URL slug and preparing everything for sending GET request
-  const inStockNum = searchParams?.inStock === "true" ? 1 : 0;
-  const outOfStockNum = searchParams?.outOfStock === "true" ? 1 : 0;
-  const page = searchParams?.page ? Number(searchParams?.page) : 1;
+const Products = () => {
+  const searchParams = useSearchParams();
+  const category = searchParams.get("category") || "";
+  const inStockNum = searchParams.get("inStock") === "true" ? 1 : 0;
+  const outOfStockNum = searchParams.get("outOfStock") === "true" ? 1 : 0;
+  const page = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
+  const price = searchParams.get("price") || 3000;
+  const rating = Number(searchParams.get("rating")) || 0;
+  const sort = searchParams.get("sort");
 
   let stockMode: string = "lte";
-  
-  // preparing inStock and out of stock filter for GET request
-  // If in stock checkbox is checked, stockMode is "equals"
-  if (inStockNum === 1) {
-    stockMode = "equals";
-  }
- // If out of stock checkbox is checked, stockMode is "lt"
-  if (outOfStockNum === 1) {
-    stockMode = "lt";
-  }
-   // If in stock and out of stock checkboxes are checked, stockMode is "lte"
-  if (inStockNum === 1 && outOfStockNum === 1) {
-    stockMode = "lte";
-  }
-   // If in stock and out of stock checkboxes aren't checked, stockMode is "gt"
-  if (inStockNum === 0 && outOfStockNum === 0) {
-    stockMode = "gt";
-  }
+  if (inStockNum === 1) stockMode = "equals";
+  if (outOfStockNum === 1) stockMode = "lt";
+  if (inStockNum === 1 && outOfStockNum === 1) stockMode = "lte";
+  if (inStockNum === 0 && outOfStockNum === 0) stockMode = "gt";
 
-  let products = [];
+  const [products, setProducts] = useState<any[]>([]);
 
-  try {
+  useEffect(() => {
     // sending API request with filtering, sorting and pagination for getting all products
-    const data = await apiClient.get(`/api/products?filters[price][$lte]=${
-        searchParams?.price || 3000
-      }&filters[rating][$gte]=${
-        Number(searchParams?.rating) || 0
-      }&filters[inStock][$${stockMode}]=1&${
-        params?.slug?.length! > 0
-          ? `filters[category][$equals]=${params?.slug}&`
-          : ""
-      }sort=${searchParams?.sort}&page=${page}`
-    );
+    const url = `/api/products?filters[price][$lte]=${price}&filters[rating][$gte]=${rating}&filters[inStock][$${stockMode}]=1&${
+      category ? `filters[category][$equals]=${category}&` : ""
+    }sort=${sort}&page=${page}`;
 
-    if (!data.ok) {
-      console.error('Failed to fetch products:', data.statusText);
-      products = [];
-    } else {
-      const result = await data.json();
-      products = Array.isArray(result) ? result : [];
-    }
-  } catch (error) {
-    console.error('Error fetching products:', error);
-    products = [];
-  }
+    apiClient
+      .get(url)
+      .then((res) => (res.ok ? res.json() : []))
+      .then((result) => setProducts(Array.isArray(result) ? result : []))
+      .catch((error) => {
+        console.error("Error fetching products:", error);
+        setProducts([]);
+      });
+  }, [category, price, rating, stockMode, sort, page]);
 
   return (
     <div className="grid grid-cols-3 justify-items-center gap-x-2 gap-y-5 max-[1300px]:grid-cols-3 max-lg:grid-cols-2 max-[500px]:grid-cols-1">

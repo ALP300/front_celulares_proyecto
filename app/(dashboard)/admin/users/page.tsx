@@ -72,7 +72,7 @@ const DashboardUsers = () => {
                     </td>
                     <th>
                       <Link
-                        href={`/admin/users/${user?.id}`}
+                        href={`/admin/users/edit?id=${user?.id}`}
                         className="btn btn-ghost btn-xs"
                       >
                         details

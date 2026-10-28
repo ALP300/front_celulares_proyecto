@@ -25,6 +25,8 @@ interface InputCategory {
 const Filters = () => {
   const pathname = usePathname();
   const { replace } = useRouter();
+  const searchParams = useSearchParams();
+  const category = searchParams.get("category");
 
   // getting current page number from Zustand store
   const { page } = usePaginationStore();
@@ -39,6 +41,7 @@ const Filters = () => {
 
   useEffect(() => {
     const params = new URLSearchParams();
+    if (category) params.set("category", category);
     // setting URL params and after that putting them all in URL
     params.set("outOfStock", inputCategory.outOfStock.isChecked.toString());
     params.set("inStock", inputCategory.inStock.isChecked.toString());
@@ -47,7 +50,7 @@ const Filters = () => {
     params.set("sort", sortBy);
     params.set("page", page.toString());
     replace(`${pathname}?${params}`);
-  }, [inputCategory, sortBy, page]);
+  }, [inputCategory, sortBy, page, category]);
 
   return (
     <div>

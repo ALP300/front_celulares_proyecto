@@ -8,30 +8,26 @@
 // Output: products grid
 // *********************
 
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import ProductItem from "./ProductItem";
 import Heading from "./Heading";
 import apiClient from "@/lib/api";
 
-const ProductsSection = async () => {
-  let products = [];
-  
-  try {
+const ProductsSection = () => {
+  const [products, setProducts] = useState<any[]>([]);
+
+  useEffect(() => {
     // sending API request for getting all products
-    const data = await apiClient.get("/api/products");
-    
-    if (!data.ok) {
-      console.error('Failed to fetch products:', data.statusText);
-      products = [];
-    } else {
-      const result = await data.json();
-      // Ensure products is an array
-      products = Array.isArray(result) ? result : [];
-    }
-  } catch (error) {
-    console.error('Error fetching products:', error);
-    products = [];
-  }
+    apiClient
+      .get("/api/products")
+      .then((res) => (res.ok ? res.json() : []))
+      .then((result) => setProducts(Array.isArray(result) ? result : []))
+      .catch((error) => {
+        console.error("Error fetching products:", error);
+        setProducts([]);
+      });
+  }, []);
 
   return (
     <div className="bg-blue-500 border-t-4 border-white">

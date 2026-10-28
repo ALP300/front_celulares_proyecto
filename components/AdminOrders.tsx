@@ -87,7 +87,7 @@ const AdminOrders = () => {
                   <td>{ new Date(Date.parse(order?.dateTime)).toDateString() }</td>
                   <th>
                     <Link
-                      href={`/admin/orders/${order?.id}`}
+                      href={`/admin/orders/edit?id=${order?.id}`}
                       className="btn btn-ghost btn-xs"
                     >
                       details

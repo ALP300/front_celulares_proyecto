@@ -106,7 +106,7 @@ const DashboardProductTable = () => {
                   <td>${product?.price}</td>
                   <th>
                     <Link
-                      href={`/admin/products/${product.id}`}
+                      href={`/admin/products/edit?id=${product.id}`}
                       className="btn btn-ghost btn-xs"
                     >
                       details

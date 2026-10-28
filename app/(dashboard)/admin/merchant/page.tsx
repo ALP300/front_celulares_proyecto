@@ -88,13 +88,13 @@ export default function MerchantPage() {
                     <td className="py-4">{merchant.products.length}</td>
                     <td className="py-4">
                       <Link
-                        href={`/admin/merchant/${merchant.id}`}
+                        href={`/admin/merchant/edit?id=${merchant.id}`}
                         className="text-blue-500 hover:underline mr-3"
                       >
                         View
                       </Link>
                       <Link
-                        href={`/admin/merchant/${merchant.id}`}
+                        href={`/admin/merchant/edit?id=${merchant.id}`}
                         className="text-blue-500 hover:underline"
                       >
                         Edit

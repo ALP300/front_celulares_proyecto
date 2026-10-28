@@ -71,7 +71,7 @@ const DashboardCategory = () => {
 
                     <th>
                       <Link
-                        href={`/admin/categories/${category?.id}`}
+                        href={`/admin/categories/edit?id=${category?.id}`}
                         className="btn btn-ghost btn-xs"
                       >
                         details

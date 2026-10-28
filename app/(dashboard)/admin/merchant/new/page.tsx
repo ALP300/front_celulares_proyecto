@@ -50,7 +50,7 @@ export default function NewMerchantPage() {
 
       const data = await response.json();
       toast.success("Merchant created successfully");
-      router.push(`/admin/merchant/${data.id}`);
+      router.push(`/admin/merchant/edit?id=${data.id}`);
     } catch (error) {
       console.error("Error creating merchant:", error);
       toast.error("Failed to create merchant");
