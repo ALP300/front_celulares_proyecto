@@ -3,13 +3,11 @@ import { SectionTitle } from "@/components";
 import { useProductStore } from "../_zustand/store";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import apiClient from "@/lib/api";
 
 const CheckoutPage = () => {
-  const { data: session } = useSession();
   const [checkoutForm, setCheckoutForm] = useState({
     name: "",
     lastname: "",
@@ -127,24 +125,6 @@ const CheckoutPage = () => {
     try {
       console.log("🚀 Starting order creation...");
       
-      // Get user ID if logged in
-      let userId = null;
-      if (session?.user?.email) {
-        try {
-          console.log("🔍 Getting user ID for logged-in user:", session.user.email);
-          const userResponse = await apiClient.get(`/api/users/email/${session.user.email}`);
-          if (userResponse.ok) {
-            const userData = await userResponse.json();
-            userId = userData.id;
-            console.log("✅ Found user ID:", userId);
-          } else {
-            console.log("❌ Could not find user with email:", session.user.email);
-          }
-        } catch (userError) {
-          console.log("⚠️  Error getting user ID:", userError);
-        }
-      }
-      
       // Prepare the order data
       const orderData = {
         name: checkoutForm.name.trim(),
@@ -160,7 +140,6 @@ const CheckoutPage = () => {
         city: checkoutForm.city.trim(),
         country: checkoutForm.country.trim(),
         orderNotice: checkoutForm.orderNotice.trim(),
-        userId: userId // Add user ID for notifications
       };
 
       console.log("📋 Order data being sent:", orderData);
